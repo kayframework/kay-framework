@@ -1,0 +1,25 @@
+<html>
+  <head>
+    <title>{{ _("Daily exception report for app \"%(app_id)s\", major version \"%(major_version)s\"")|format(app_id=app_id, major_version=major_version) }}".</title>
+  </head>
+  <body>
+    <p>{{ _("At least %(occurrence_count)s occurrences of %(exception_count)s exceptions across %(version_count)s versions.")|format(occurrence_count=occurrence_count, exception_count=exception_count, version_count=version_count) }}</p>
+    {% for version in versions %}
+    <h1>{{ _("Minor version %(version_no)s")|format(version_no=version[0]) }}</h1>
+    {% for exception in version.1 %}
+    <h2>{{exception.signature}} ({{ _("at least %(exception_count)s occurrences")|format(exception_count=exception.count) }})</h2>
+    <table>
+      <tr>
+        <th>{{ _("Handler") }}:</th>
+        <td>{{ exception.handler }}</td>
+      </tr>
+      <tr><th>{{ _("URL") }}:</th> <td>{{ exception.http_method }} {{ exception.url }}</td></tr>
+      <tr>
+        <th>{{ _("Stacktrace") }}:</th>
+        <td><pre>{{ exception.stacktrace }}</pre></td>
+      </tr>
+    </table>
+    {% endfor %}
+    {% endfor %}
+  </body>
+</html>

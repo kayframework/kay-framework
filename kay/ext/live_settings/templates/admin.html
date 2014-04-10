@@ -1,0 +1,196 @@
+<html>
+  <head>
+    <title>{{ _("Live Settings Admin") }}</title>
+    <style type="text/css">
+      body {
+        font-family: Arial, sans-serif;
+        font-size: 62.5%;
+      }
+      form {
+        margin: 0;
+      }
+      .goog-button:focus, .goog-button:hover {
+        border-color: #000000;
+      }
+      .goog-button {
+        -webkit-border-radius: 2px;
+        -moz-border-radius: 2px;
+        border-radius: 2px;
+        /* for firefox 3.6+ */
+        background: -moz-linear-gradient(center top , #FFFFFF, #DDDDDD) repeat scroll 0 0 transparent;
+        /* for IE */
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#DDDDDD');
+        /* for webkit browsers */
+        background: -webkit-gradient(linear, center top, center bottom, from(#FFFFFF), to(#DDDDDD));
+        border-color: #BBBBBB #999999 #999999 #BBBBBB;
+        border-style: solid;
+        border-width: 1px;
+        color: #000000;
+        cursor: pointer;
+        display: inline-block;
+        font: 13px Arial,sans-serif;
+        margin: 0;
+        padding: 4px 8px 5px;
+        text-decoration: none;
+        text-shadow: 0 1px 1px #FFFFFF;
+      }
+      .g-doc {
+        font-size: 130%;
+      }
+      .ae-message {
+        background-color: #F6F9FF;
+        border: 1px solid #E5ECF9;
+        margin-bottom: 1em;
+        padding: 0.5em;
+      }
+      .ae-alert {
+        background: url(https://appengine.google.com/img/icn/icn-warning.gif) no-repeat;
+        font-weight: bold;
+        margin-bottom: 0.5em;
+        padding-left: 1.8em;
+      }
+      .ae-disabled {
+        color: #666 !important;
+        cursor: default !important;
+        text-decoration: none !important;
+      }
+      .ae-table-caption {
+        background: #E5ECF9;
+        border: 1px solid #C5D7EF;
+      }
+      .ae-table-caption.ae-paginate {
+        padding: 2px 5px;
+      }
+      .ae-item {
+        padding: 5px;
+        border-top: 1px solid #C5D7EF;
+        border-left: 1px solid #C5D7EF;
+        border-right: 1px solid #C5D7EF;
+      }
+      .ae-item.last {
+        border-bottom: 1px solid #C5D7EF;
+      }
+      .ae-item-header {
+        font-size: 120%;
+        padding-bottom: 5px;
+      }
+      .ae-item-details div {
+        display: inline-block; 
+      }
+      .ae-item-details div.key {
+        width: 200px;
+      }
+      .ae-item-details div.value {
+        width: 350px;
+      }
+      .ae-item-details th {
+        vertical-align: top;
+      }
+      .ae-item-details th,.ae-item-details td {
+        font-size: 80%;
+      }
+      div.actions {
+        display: inline;
+      }
+
+      .round-top {
+        -webkit-border-top-left-radius: 5px;
+        -webkit-border-top-right-radius: 5px;
+        -moz-border-radius: 5px 5px 0px 0px;
+        border-radius: 5px 5px 0px 0px;
+      }
+
+      .round-bottom {
+        -webkit-border-bottom-left-radius: 5px;
+        -webkit-border-bottom-right-radius: 5px;
+        -moz-border-radius: 0px 0px 5px 5px;
+        border-radius: 0px 0px 5px 5px;
+      }
+
+      .round-left {
+        -webkit-border-top-left-radius: 5px;
+        -webkit-border-bottom-left-radius: 5px;
+        -moz-border-radius: 5px 0px 0px 5px;
+        border-radius: 5px 0px 0px 5px;
+      }
+
+      .round-right {
+        -webkit-border-top-right-radius: 5px;
+        -webkit-border-bottom-right-radius: 5px;
+        -moz-border-radius: 0px 5px 5px 0px;
+        border-radius: 0px 5px 5px 0px;
+      }
+
+      .round-all {
+        -webkit-border-top-right-radius: 5px;
+        -webkit-border-top-left-radius: 5px;
+        -webkit-border-bottom-right-radius: 5px;
+        -webkit-border-bottom-left-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+      }
+
+      ul.errors {
+        padding: 0;
+      }
+
+      ul.errors li {
+        list-style-type: none;
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="g-doc">
+      {% if flash_msg %}
+      <div class="ae-message"><strong>{{ flash_msg }}</strong></div>
+      {% endif %}
+      <p>{{ _("This page shows your application's live settings.") }}</p>
+      <div class="ae-message">
+        <div class="ae-alert">
+          <strong>{{ _("It may take a few minutes for changes to propagate to all application instances.") }}</strong>
+        </div>
+      </div>
+      {% if nsform %}
+      <p>
+        {% call nsform(method="get") %}
+          {% if namespace %}{{ _("Using Namespace") }}: <strong>{{ namespace }}</strong>{% else %}{{ _("Using the default namespace") }}{% endif %}
+          &nbsp;&nbsp;
+          {{ nsform['namespace'].render()|safe }}
+          <input class="goog-button" type="submit" name="update_namespace" value="{{ _("Update Namespace") }}">
+          {{ nsform['namespace'].errors()|safe }}
+        {% endcall %} 
+      </p>
+      {% else %}
+      <a href="{{ url_for("live_settings/admin") }}?namespace=">{{ _("Select a different namespace") }}</a>
+      {% endif %}
+      {% call new_form() %}
+      <div class="ae-item">
+        <div class="ae-item-details">
+          <span>{{ new_form['key_name'].label()|safe }}: {{ new_form['key_name'].render()|safe }}</span>
+          <span>{{ new_form['value'].label()|safe }}: {{ new_form['value'].render()|safe }}</span>
+          <span>&nbsp;</span>
+          <span><input class="goog-button" type="submit" name="submit" value="{{ _("Add") }}"></span>
+        </div>
+      </div>
+      {% endcall %}
+      {% for object, form in form_list %}
+        {% call form() %}
+          {% set utime = to_local_timezone(object.utime) %}
+          <div class="ae-item{% if loop.last %} last{% endif %}">
+            <div class="ae-item-details">
+              <div class="key">{{ object.key().name() }} {{ form['key_name'].hidden()|safe }}</div>
+              <div class="value">{{ form['value'].render()|safe }} <input class="goog-button" type="submit" name="submit" value="{{ _("Update") }}"> <input class="goog-button" type="submit" name="delete" value="{{ _("Delete") }}"></div>
+              <div>{{ _("Last Updated:") }} {{ "%s/%s/%s %s:%s"|format(utime.year, utime.month, utime.day, utime.hour, utime.minute) }}</div>
+            </div>
+          </div>
+        {% endcall %}
+      {% else %}
+      <div class="ae-message">
+        <div class="ae-alert">{{ _("There are no live settings currently set for this application.") }}</div>
+        {{ _("Your application may be working using default values set in your application. You can override any default settings you are using by setting it here.") }}
+      </div>
+      {% endfor %}
+    </div>
+  </body>
+</html>

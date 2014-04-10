@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>{% block title %}{% endblock title %}</title>
+    {%- block css %}
+    <link rel="stylesheet" type="text/css" href="{{ internal_media_url }}/css/style.css" />
+    {% endblock css -%}
+    {%- block js %}
+    {% endblock js -%}
+    {%- block additional_headers %}
+    {% endblock additional_headers %}
+  </head>
+  {%- block bodytag %}<body>{% endblock bodytag -%}
+    {% block content %}
+    {% endblock content %}
+  </body>
+</html>

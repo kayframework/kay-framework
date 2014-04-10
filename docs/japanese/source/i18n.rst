@@ -1,0 +1,141 @@
+================
+メッセージ国際化
+================
+
+概要
+----
+
+Kay はソースからのメッセージ抽出・アプリケーションに新規言語を追加する方法・メッセージカタログの更新とコンパイル・javascript の gettext 実装を含む、殆んど完全な国際化機構を持っています。この機能は基本的に jinja2 の国際化機構をベースとしているので、下記でホストされている jinja2 のドキュメントを参照するのは良いアイデアと言えるでしょう:
+
+  http://jinja.pocoo.org/2/documentation/
+
+Kay は自動的にブラウザの Accept-Language ヘッダを解析して、ユーザーが使用する言語を決めます。また使用する言語を選択するためのリンクを作成し、Accept-Language の設定を上書きする事もできます。
+
+メッセージのマーク
+------------------
+
+Python コード内では下記のようにしてメッセージをマークできます:
+
+.. code-block:: python
+
+  from kay.i18n import gettext as _
+  _('Hello')
+
+テンプレート内では下記のようにします:
+
+.. code-block:: html
+
+  <p>{{ _('Hello') }}</p>
+  <p>{% trans %}Hello{% endtrans %}
+
+
+メッセージの抽出
+----------------
+
+``myapp`` アプリケーションからメッセージを抽出し、カタログファイルの雛型を作成するには下記のようにします:
+
+.. code-block:: bash
+
+   $ python manage.py extract_messages myapp
+
+``extract_messages`` サブコマンドはオプションの ``--domain`` パラメーターを受け付けます。この値は ``messages`` か ``jsmessages`` である必要があります。
+
+翻訳の追加
+----------
+
+雛型から日本語の翻訳を追加するには下記のようにします:
+
+.. code-block:: bash
+
+  $ python manage.py add_translations myapp -l ja
+
+翻訳の更新
+----------
+
+翻訳したファイルをアップデートされた雛型に追従させるには下記のようにします:
+
+.. code-block:: bash
+
+   $ python manage.py update_translations myapp -l ja
+
+
+メッセージのコンパイル
+----------------------
+
+``myapp`` アプリケーションの翻訳全てをコンパイルするには下記のようにします:
+
+.. code-block:: bash
+
+  $ python manage.py compile_translations myapp
+
+
+言語を設定するためのリンクを作成する
+------------------------------------
+
+ユーザーの cookie に使用したい言語を設定するための関数があります。この機能を使うためには下記のように ``kay.i18n`` を ``INSTALLED_APPS`` に追加する必要があります。
+
+.. code-block:: python
+
+  INSTALLED_APPS = (
+    'kay.i18n',
+  )
+
+jinja2 のコンテキストに ``create_lang_url`` 関数が自動でロードされていますので、下記のようにこれを使って明示的に言語を設定するリンクを作成する事ができます。
+
+.. code-block:: html
+
+  <a href="{{ create_lang_url(lang='en') }}">{{ _('English') }}</a>
+  <a href="{{ create_lang_url(lang='ja') }}">{{ _('Japanese') }}</a>
+
+
+javascript での国際化
+---------------------
+
+javascript で gettext を使用するためのハンドラーは下記のように
+`myproject/urls.py` に追加します:
+
+.. code-block:: python
+
+   from kay.routing import (
+     ViewGroup, Rule
+   )
+   view_groups = [
+     ViewGroup(
+       Rule('/_ah/queue/deferred', endpoint='deferred',
+         view='kay.handlers.task.task_handler'),
+       Rule('/maintenance_page', endpoint='_internal/maintenance_page',
+         view='kay._internal.views.maintenance_page'),
+       Rule('/_i18n.js', endpoint='i18n_js',
+         view='kay.views.i18n.javascript_catalog',
+         defaults={'packages':('myapp','kay')})
+   )]
+
+`index.html` で次のように読み込みます:
+
+.. code-block:: html
+
+   <script src="{{ url_for('i18n_js') }}"></script>
+
+下記のような Javascript をアプリケーションディレクトリ内（例えば
+`myapp/static/myapp.js`）に配置します:
+
+.. code-block:: javascript
+
+   document.getElementById('dynamic').innerHTML = gettext('Hello');
+
+`app.yaml` に静的ファイル用のハンドラーを追加します:
+
+.. code-block:: yaml
+
+   handlers:
+   - url: /static
+     static_dir: myapp/static
+
+これで下記のようにすれば特定の言語向け（ここでは ja です）にメッセージ
+を抽出、追加できます:
+
+.. code-block:: bash
+
+   $ python manage.py extract_messages myapp -d jsmessages
+   $ python manage.py add_translations myapp -l ja
+

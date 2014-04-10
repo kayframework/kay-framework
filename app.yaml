@@ -1,0 +1,68 @@
+application: %PROJ_NAME%
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /favicon.ico
+  static_files: favicon.ico
+  upload: favicon.ico
+  mime_type: image/x-icon
+
+- url: /media
+  static_dir: media
+
+- url: /_generated_media
+  static_dir: _generated_media
+
+- url: /_media
+  static_dir: kay/media
+
+- url: /_kay/.*
+  script: kay.main.application
+  login: admin
+
+- url: /_ah/queue/deferred
+  script: kay.main.application
+  login: admin
+
+- url: /_ah/test.*
+  script: kay.ext.testutils.gaeunit.application
+  login: admin
+
+- url: /.*
+  script: kay.main.application
+
+libraries:
+- name: jinja2
+  version: latest
+
+skip_files: |
+  ^(.*/)?(
+  (_backup/.*)|
+  (app\.yaml)|
+  (app\.yml)|
+  (index\.yaml)|
+  (index\.yml)|
+  (#.*#)|
+  (.*~)|
+  (.*\.py[co])|
+  (.*\.po)|
+  (.*\.pot)|
+  (\..*)|
+  (app\.yaml\.sample)|
+  (index\.yaml\.sample)|
+  (cron\.yaml\.sample)|
+  (manage\.py)|
+  (TODO)|
+  (TODO\.pdf)|
+  (README)|
+  (README\.pdf)|
+  (LICENSE)|
+  (gaema-LICENSE)|
+  (kay\/docs\/.*)|
+  (kay\/management\/.*)|
+  (kay\/lib\/babel\/localedata\/.*)|
+  )$
+

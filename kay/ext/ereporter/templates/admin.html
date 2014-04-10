@@ -1,0 +1,157 @@
+<html>
+  <head>
+    <title>{{ _("Exception Reporter Admin") }}</title>
+    <style type="text/css">
+      body {
+        font-family: Arial, sans-serif;
+        font-size: 62.5%;
+      }
+      .g-doc {
+        font-size: 130%;
+      }
+      .ae-message {
+        background-color: #F6F9FF;
+        border: 1px solid #E5ECF9;
+        margin-bottom: 1em;
+        padding: 0.5em;
+      }
+      .ae-alert {
+        background: url(https://appengine.google.com/img/icn/icn-warning.gif) no-repeat;
+        font-weight: bold;
+        margin-bottom: 0.5em;
+        padding-left: 1.8em;
+      }
+      .ae-disabled {
+        color: #666 !important;
+        cursor: default !important;
+        text-decoration: none !important;
+      }
+      .ae-table-caption {
+        background: #E5ECF9;
+        border: 1px solid #C5D7EF;
+      }
+      .ae-table-caption.ae-paginate {
+        padding: 2px 5px;
+      }
+      .ae-exception {
+        padding: 5px;
+        border-bottom: 1px solid #C5D7EF;
+        border-left: 1px solid #C5D7EF;
+        border-right: 1px solid #C5D7EF;
+      }
+      .ae-exception.last {
+        border-bottom: none;
+      }
+      .ae-exception-header {
+        font-size: 120%;
+        padding-bottom: 5px;
+      }
+      .ae-exception-details th {
+        vertical-align: top;
+      }
+      .ae-exception-details th,.ae-exception-details td {
+        font-size: 80%;
+      }
+      .ae-exception-count {
+        color: #FFF;
+        font-weight: bold;
+        padding: 3px;
+        /* for non-css3 browsers */
+        background: #C90000; 
+
+        /* for IE */
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#E00000', endColorstr='#880000');
+        /* for webkit browsers */
+        background: -webkit-gradient(linear, left top, left bottom, from(#E00000), to(#880000));
+        /* for firefox 3.6+ */
+        background: -moz-linear-gradient(top,  #E00000,  #880000);
+      }
+
+      .round-top {
+        -webkit-border-top-left-radius: 5px;
+        -webkit-border-top-right-radius: 5px;
+        -moz-border-radius: 5px 5px 0px 0px;
+        border-radius: 5px 5px 0px 0px;
+      }
+
+      .round-bottom {
+        -webkit-border-bottom-left-radius: 5px;
+        -webkit-border-bottom-right-radius: 5px;
+        -moz-border-radius: 0px 0px 5px 5px;
+        border-radius: 0px 0px 5px 5px;
+      }
+
+      .round-left {
+        -webkit-border-top-left-radius: 5px;
+        -webkit-border-bottom-left-radius: 5px;
+        -moz-border-radius: 5px 0px 0px 5px;
+        border-radius: 5px 0px 0px 5px;
+      }
+
+      .round-right {
+        -webkit-border-top-right-radius: 5px;
+        -webkit-border-bottom-right-radius: 5px;
+        -moz-border-radius: 0px 5px 5px 0px;
+        border-radius: 0px 5px 5px 0px;
+      }
+
+      .round-all {
+        -webkit-border-top-right-radius: 5px;
+        -webkit-border-top-left-radius: 5px;
+        -webkit-border-bottom-right-radius: 5px;
+        -webkit-border-bottom-left-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="g-doc">
+      <p>This page show exception data recorded by the Error Reporter.</p>
+      {% if exceptions %}
+      {% block pagination_top %}
+      <div class="ae-paginate ae-table-caption">
+        {% if page.has_previous %} <a class="novisit" href="?all={{ "1" if show_all else "0" }}&page={{ page.previous_page_number }}">‹ {{ _("Prev %(per_page)s")|format(per_page=paginator.per_page) }}</a> {% else %}<span class="ae-disabled">‹ {{ _("Prev %(per_page)s")|format(per_page=paginator.per_page) }}</span> {% endif %}<b>{{ page.start_index }} - {{ page.end_index }}</b>{% if page.has_next %} <a class="novisit" href="?all={{ "1" if show_all else "0" }}&page={{ page.next_page_number }}">{{ _("Next %(per_page)s")|format(per_page=paginator.per_page) }} ›</a>{% else %} <span class="ae-disabled">{{ _("Next %(per_page)s")|format(per_page=paginator.per_page) }} ›</span>{% endif %}
+      </div>
+      {% endblock %}
+      {% for exception in exceptions %}
+        <div class="ae-exception{% if loop.last %} last{% endif %}">
+          <div class="ae-exception-header">
+            <span class="">{{ "%s/%s"|format(exception.date.month, exception.date.day) }}</span>
+            <span class="">{{ exception.http_method }}</span>&nbsp;
+            <span style="font-weight: bold">{{ exception.url }}</span>&nbsp;
+            <span class="">{{ exception.signature.split("@")[0] }}</span>&nbsp;
+            <span class="ae-exception-count round-all">&gt;{{ exception.count }}</span>&nbsp;
+          </div>
+          <div class="ae-exception-details">
+            <table>
+              <tr>
+                <th>{{ _("Location") }}:</th>
+                <td>{{ exception.signature.split("@")[1] }}</td>
+              </tr>
+              <tr>
+                <th>{{ _("Handler") }}:</th>
+                <td>{{ exception.handler }}</td>
+              </tr>
+              <tr>
+                <th>{{ _("Stacktrace") }}:</th>
+                <td><pre>{{ exception.stacktrace }}</pre></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      {% endfor %}
+      {% block pagination_bottom %}
+      <div class="ae-paginate ae-table-caption">
+        {% if page.has_previous %} <a class="novisit" href="?all={{ "1" if show_all else "0" }}&page={{ page.previous_page_number }}">‹ {{ _("Prev %(per_page)s")|format(per_page=paginator.per_page) }}</a> {% else %}<span class="ae-disabled">‹ {{ _("Prev %(per_page)s")|format(per_page=paginator.per_page) }}</span> {% endif %}<b>{{ page.start_index }} - {{ page.end_index }}</b>{% if page.has_next %} <a class="novisit" href="?all={{ "1" if show_all else "0" }}&page={{ page.next_page_number }}">{{ _("Next %(per_page)s")|format(per_page=paginator.per_page) }} ›</a>{% else %} <span class="ae-disabled">{{ _("Next %(per_page)s")|format(per_page=paginator.per_page) }} ›</span>{% endif %}
+      </div>
+      {% endblock %}
+      {% else %}
+      <div class="ae-message">
+        <div class="ae-alert">{{ _("There are no exception records available for this application.") }}</div>
+        {{ _("This may mean that your application is perfect! or it could mean that exceptions are not being recorded properly. See the <a href=\"%(logs_url)s\">application logs</a> for more details.")|format(logs_url="https://appengine.google.com/logs?&app_id="+app_id)|safe }}
+      </div>
+      {% endif %}
+    </div>
+  </body>
+</html>

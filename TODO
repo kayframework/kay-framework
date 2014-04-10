@@ -1,0 +1,35 @@
+====
+TODO
+====
+
+Documentation
+-------------
+
+* Write documentations about
+
+ * How to contribute to Kay
+ * Template strategy
+ * registration app
+ * jsonrpc2 feature
+ * initial keyword argument of Form class
+ * how to add custom attribute on arbitrary form widgets
+
+ * a description about disable_recording() in tearDown
+
+kay
+---
+
+* It could be better than now to allow installing Kay to somewhere on
+  the system paths.
+* A urlfetch stub for testing purpose.
+
+kay.auth
+--------
+
+* Incorporate Ian's ChoiceBackend.
+
+kay.utils.forms
+---------------
+
+* Fix an issue when use_confirmation is set to True and form is
+  customised on its appearance with {% call %}.

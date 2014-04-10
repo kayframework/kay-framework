@@ -1,0 +1,5 @@
+repo: fa94c6ad4446567333582e68529d3924a1266c4e
+node: 70e0980938930389a9c100b4ef2449ebad8b00e5
+branch: py27
+latesttag: v_1.1.1
+latesttagdistance: 57

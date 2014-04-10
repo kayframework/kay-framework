@@ -1,0 +1,39 @@
+{
+  "embeddedFonts" :
+[["VL-Gothic-Regular.ttf","VL-PGothic-Regular.ttf","ipam.ttf","ipamp.ttf"]],
+  "fontsAlias" : {
+    "stdFont": "VL-PGothic-Regular",
+    "stdBold": "VL-PGothic-Regular",
+    "stdItalic": "VL-PGothic-Regular",
+    "stdBoldItalic": "VL-PGothic-Regular",
+    "stdMono": "VL-Gothic-Regular",
+    "stdMonoBold": "VL-Gothic-Regular",
+    "stdSansBold": "VL-Gothic-Regular"
+  },
+  "styles" : [
+    ["base" , {
+      "wordWrap": "CJK"
+    }],
+    ["literal" , {
+      "wordWrap": "None",
+      "font": "VL-Gothic-Regular"
+    }]
+  ]
+}
+
+#    stdFont: Helvetica
+#    stdBold: Helvetica-Bold
+#    stdItalic: Helvetica-Oblique
+#    stdBoldItalic: Helvetica-BoldOblique
+#
+#    stdSans: Helvetica
+#    stdSansBold: Helvetica-Bold
+#    stdSansItalic: Helvetica-Oblique
+#    stdSansBoldItalic: Helvetica-BoldOblique
+#
+#    stdMono: Courier
+#
+#    stdMonoItalic: Courier-Oblique
+#    stdMonoBold: Courier-Bold
+#    stdMonoBoldItalic: Courier-BoldOblique
+#    stdSerif: Times-Roman
