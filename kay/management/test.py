@@ -118,7 +118,8 @@ def runtest(target='', verbosity=0):
       else:
         suite.addTest(unittest.defaultTestLoader.loadTestsFromModule(
             tests_mod))
-  unittest.TextTestRunner(verbosity=verbosity).run(suite)
+  result = unittest.TextTestRunner(verbosity=verbosity).run(suite)
+  sys.exit(int(bool(result.failures or result.errors)))
 
 def do_runtest(target=('t', ''), verbosity=('v', 0),
                high_replication=False):
